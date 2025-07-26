@@ -7,6 +7,7 @@ from app.models import Part, db, ServiceTicket
 from .schemas import part_schema, parts_schema
 from . import inventory_bp
 from app.extensions import limiter, cache
+from app.utils.roles import mechanic_token_required
 
 PART_NOT_FOUND = "Part not found"
 
@@ -14,7 +15,8 @@ PART_NOT_FOUND = "Part not found"
 # Create a new part
 @inventory_bp.route("/", methods=["POST"])
 @limiter.limit("10/hour")
-def create_part():
+@mechanic_token_required
+def create_part(current_user):
     if not request.json:
         return jsonify({"Error": "No JSON data provided"}), 400
     try:
@@ -58,7 +60,8 @@ def get_part(part_id):
 # Update a part
 @inventory_bp.route("/<int:part_id>", methods=["PUT"])
 @limiter.limit("10/minute")
-def update_part(part_id):
+@mechanic_token_required
+def update_part(current_user, part_id):
     part = db.session.get(Part, part_id)
     if not part:
         return jsonify({"Error": PART_NOT_FOUND}), 404
@@ -82,7 +85,8 @@ def update_part(part_id):
 # Delete a part
 @inventory_bp.route("/<int:part_id>", methods=["DELETE"])
 @limiter.limit("5/hour")
-def delete_part(part_id):
+@mechanic_token_required
+def delete_part(current_user, part_id):
     part = db.session.get(Part, part_id)
     if not part:
         return jsonify({"Error": PART_NOT_FOUND}), 404
@@ -95,7 +99,8 @@ def delete_part(part_id):
 # Route to reduce the stock of a specific part
 @inventory_bp.route("/<int:part_id>/remove_stock", methods=["POST"])
 @limiter.limit("20/minute")
-def remove_part_stock(part_id):
+@mechanic_token_required
+def remove_part_stock(current_user, part_id):
     part = db.session.get(Part, part_id)
     if not part:
         return jsonify({"Error": PART_NOT_FOUND}), 404
@@ -137,7 +142,8 @@ def remove_part_stock(part_id):
 
 # Route to add a part to a service ticket
 @inventory_bp.route("/<int:part_id>/add-to-ticket/<int:ticket_id>", methods=["POST"])
-def add_part_to_ticket(part_id, ticket_id):
+@mechanic_token_required
+def add_part_to_ticket(current_user, part_id, ticket_id):
     part = db.session.get(Part, part_id)
     if not part:
         return jsonify({"Error": PART_NOT_FOUND}), 404

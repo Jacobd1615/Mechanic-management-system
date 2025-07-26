@@ -13,3 +13,7 @@ with app.app_context():
 
 # seeding database
 # curl -X POST https://mechanic-management-system.onrender.com/fakedata/seed-database
+
+# swagger
+# https://mechanic-management-system.onrender.com/api/docs
+

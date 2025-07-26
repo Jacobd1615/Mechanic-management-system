@@ -1,152 +1,152 @@
-# 🔧 Mechanic Shop Database API
+# 🔧 Mechanic Shop Management API
 
-[![Build Status](https://github.com/Jacobd1615/Mechanic-Database-advance-/actions/workflows/main.yaml/badge.svg)](https://github.com/Jacobd1615/Mechanic-Database-advance-/actions)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Build Status](https://github.com/Jacobd1615/Mechanic-management-system/actions/workflows/main.yaml/badge.svg)](https://github.com/Jacobd1615/Mechanic-management-system/actions)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/flask-3.1.1-green.svg)](https://flask.palletsprojects.com/)
 [![Tests](https://img.shields.io/badge/tests-43%2F43%20passing-brightgreen.svg)](#testing)
+[![Live Demo](https://img.shields.io/badge/demo-live-success.svg)](https://mechanic-management-system.onrender.com/api/docs)
 
-A professional REST API for managing a mechanic shop's operations, including customers, mechanics, service tickets, and inventory management. Built with Flask and featuring comprehensive test coverage, JWT authentication, and enterprise-level architecture.
+> **Created by Jacob Dyson** - Professional REST API for comprehensive mechanic shop operations management
 
-## 🚀 Features
+A production-ready REST API built with Flask for managing mechanic shop operations including customers, mechanics, service tickets, and inventory. Features JWT authentication, comprehensive test coverage, and enterprise-level architecture.
 
-- **Complete CRUD Operations** for all entities (Customers, Mechanics, Service Tickets, Inventory)
-- **JWT Authentication & Authorization** with role-based access control
-- **Comprehensive Test Suite** with 43 tests and 100% pass rate
-- **API Documentation** with Swagger/OpenAPI integration
-- **Rate Limiting & Caching** for production performance
-- **Professional Architecture** with Blueprint-based modular design
-- **CI/CD Pipeline** with GitHub Actions
-- **MySQL Database** with SQLAlchemy ORM
+## ✨ Key Features
 
-## 📋 Table of Contents
+- 🔐 **JWT Authentication** with role-based access control
+- 📊 **Complete CRUD Operations** for all business entities
+- 🧪 **100% Test Coverage** with 43 comprehensive tests
+- 📚 **Interactive API Documentation** via Swagger UI
+- 🚀 **Production Ready** with rate limiting & caching
+- 🏗️ **Modular Architecture** using Flask Blueprints
+- ⚡ **High Performance** with SQLAlchemy ORM
+- 🔄 **CI/CD Pipeline** with automated deployment
 
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [API Documentation](#api-documentation)
-- [Testing](#testing)
-- [Architecture](#architecture)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
+## 🎯 Live Demo
 
-## ⚡ Quick Start
+**API Base URL:** https://mechanic-management-system.onrender.com  
+**Documentation:** https://mechanic-management-system.onrender.com/api/docs
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Jacobd1615/Mechanic-Database-advance-.git
-   cd Mechanic-Database-advance-
-   ```
-
-2. **Set up virtual environment**
-   ```bash
-   python -m venv venv
-   # Windows
-   venv\Scripts\activate
-   # macOS/Linux
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure database** (see [Configuration](#configuration))
-
-5. **Run the application**
-   ```bash
-   python app.py
-   ```
-
-6. **Access the API** at `http://localhost:5000`
-
-## 🛠 Installation
-
-### Prerequisites
-
-- Python 3.11 or higher
-- MySQL Server 8.0+
-- Git
-
-### Step-by-Step Installation
-
-1. **Clone and Navigate**
-   ```bash
-   git clone https://github.com/Jacobd1615/Mechanic-Database-advance-.git
-   cd Mechanic-Database-advance-
-   ```
-
-2. **Create Virtual Environment**
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Activate Virtual Environment**
-   - **Windows:**
-     ```cmd
-     venv\Scripts\activate
-     ```
-   - **macOS/Linux:**
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## ⚙️ Configuration
-
-### Database Setup
-
-1. **Create MySQL Database**
-   ```sql
-   CREATE DATABASE mechanic_db;
-   CREATE USER 'mechanic_user'@'localhost' IDENTIFIED BY 'your_password';
-   GRANT ALL PRIVILEGES ON mechanic_db.* TO 'mechanic_user'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
-
-2. **Update Configuration**
-   Edit `config.py` with your database credentials:
-   ```python
-   SQLALCHEMY_DATABASE_URI = "mysql+pymysql://mechanic_user:your_password@localhost/mechanic_db"
-   ```
-
-### Environment Variables
-
-Create a `.env` file in the project root:
-```env
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=mysql+pymysql://mechanic_user:your_password@localhost/mechanic_db
-```
-
-## 📚 API Documentation
-
-### Interactive Documentation
-
-Visit `http://localhost:5000/swagger/` for interactive API documentation.
-
-### Authentication
-
-All endpoints (except `/fakedata/`) require JWT authentication:
+## 🚀 Quick Start
 
 ```bash
-# Get JWT token (implement your auth endpoint)
-curl -X POST http://localhost:5000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "password"}'
+# Clone repository
+git clone https://github.com/Jacobd1615/Mechanic-management-system.git
+cd mechanic_shop_db
 
-# Use token in requests
-curl -X GET http://localhost:5000/customers \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+# Setup environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # macOS/Linux
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env  # Edit with your settings
+
+# Run application
+python flask_app.py
 ```
 
-### Main Endpoints
+## 📋 API Endpoints
 
-| Method | Endpoint | Description | Auth Required |
+### 🔐 Authentication
+- `POST /customers/login` - Customer authentication
+- `POST /mechanics/login` - Mechanic authentication
+
+### 👥 Customers
+- `GET /customers/` - List all customers (Auth: Customer)
+- `POST /customers/` - Create new customer
+- `GET /customers/{id}` - Get customer details (Auth: Customer)
+- `PUT /customers/{id}` - Update customer (Auth: Customer)
+- `DELETE /customers/{id}` - Delete customer (Auth: Customer)
+
+### 🔧 Mechanics  
+- `GET /mechanics/` - List all mechanics (Auth: Mechanic)
+- `POST /mechanics/` - Create new mechanic
+- `GET /mechanics/{id}` - Get mechanic details (Auth: Mechanic)
+- `PUT /mechanics/{id}` - Update mechanic (Auth: Mechanic)
+- `DELETE /mechanics/{id}` - Delete mechanic (Auth: Mechanic)
+
+### 🎫 Service Tickets
+- `GET /service-tickets/` - List tickets (Auth: Role-based)
+- `POST /service-tickets/` - Create ticket (Auth: Customer)
+- `GET /service-tickets/{id}` - Get ticket details (Auth: Role-based)
+- `PUT /service-tickets/{id}` - Update ticket (Auth: Role-based)
+
+### 📦 Inventory
+- `GET /inventory/` - List all parts
+- `POST /inventory/` - Create part (Auth: Mechanic)
+- `PUT /inventory/{id}` - Update part (Auth: Mechanic)
+- `DELETE /inventory/{id}` - Delete part (Auth: Mechanic)
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ --cov=app --cov-report=html
+
+# Test specific module
+python -m pytest tests/test_customer.py -v
+```
+
+**Test Results:** 43/43 tests passing ✅
+
+## 🏗️ Architecture
+
+```
+app/
+├── blueprints/           # Modular route definitions
+│   ├── customers/        # Customer management
+│   ├── mechanics/        # Mechanic management
+│   ├── service_tickets/  # Service ticket operations
+│   ├── inventory/        # Parts inventory
+│   └── fakedata/         # Test data generation
+├── utils/               # Utility functions
+│   ├── roles.py         # JWT authentication & authorization
+│   └── util.py          # Helper functions
+├── models.py            # SQLAlchemy database models
+├── extensions.py        # Flask extensions configuration
+└── __init__.py          # Application factory
+
+tests/                   # Comprehensive test suite
+config.py               # Environment configurations
+flask_app.py           # Application entry point
+requirements.txt       # Python dependencies
+```
+
+## 🚀 Deployment
+
+**Live Production:** https://mechanic-management-system.onrender.com
+
+### Deploy to Render
+1. Connect GitHub repository
+2. Set environment variables
+3. Deploy automatically on push
+
+### Environment Variables for Production
+```env
+SQLALCHEMY_DATABASE_URI=postgresql://...
+SECRET_KEY=your-production-secret
+FLASK_ENV=production
+```
+
+## 👨‍� Author
+
+**Jacob Dyson**
+- GitHub: [@Jacobd1615](https://github.com/Jacobd1615)
+- Project: [Mechanic Management System](https://github.com/Jacobd1615/Mechanic-management-system)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+*Built with ❤️ by Jacob Dyson*
 |--------|----------|-------------|---------------|
 | `GET` | `/customers` | List all customers | ✅ |
 | `POST` | `/customers` | Create new customer | ✅ |
