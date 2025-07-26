@@ -665,7 +665,6 @@ paths:
           description: "Labor log updated successfully"
           schema:
             $ref: "#/definitions/LaborLogResponse"
-  /service-tickets/{ticket_id}/labor:
     delete:
       tags:
         - "service-tickets"
