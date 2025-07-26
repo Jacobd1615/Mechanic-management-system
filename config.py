@@ -14,5 +14,7 @@ class TestingConfig:
 
 
 class ProductionConfig:
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    print(f"DEBUG: DATABASE_URL = {DATABASE_URL}")  # This will show in Render logs
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     CACHE_TYPE = "SimpleCache"
