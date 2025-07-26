@@ -1,0 +1,36 @@
+# Production Requirements for Mechanic Shop API
+# Core Web Framework
+Flask==3.1.1
+gunicorn==23.0.0
+
+# Database & ORM
+SQLAlchemy==2.0.41
+Flask-SQLAlchemy==3.1.1
+PyMySQL==1.1.1
+
+# Data Serialization & Validation
+marshmallow==4.0.0
+flask-marshmallow==1.3.0
+
+# Authentication & Security
+python-jose==3.5.0
+cryptography==45.0.4
+
+# API Documentation
+flask-swagger-ui==5.21.0
+
+# Rate Limiting & Caching
+Flask-Limiter==3.12
+Flask-Caching==2.3.1
+limits==5.4.0
+
+# Development & Testing Dependencies
+Faker==37.4.0
+pytest==8.4.1
+
+# Environment & Configuration
+python-dotenv==1.0.1
+
+# Additional Dependencies
+PyYAML==6.0.2
+Werkzeug==3.1.3

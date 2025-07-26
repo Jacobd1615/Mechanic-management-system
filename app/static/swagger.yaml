@@ -1,0 +1,997 @@
+swagger: "2.0"
+
+# General API Information
+info:
+  title: "Mechanic Database"
+  description: "API for managing a mechanic shop system, including customers, service tickets, mechanics, and inventory."
+  version: "1.0.0"
+
+# API Host and Schemes
+host: "127.0.0.1:5000"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+# Security Definitions
+securityDefinitions:
+  bearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+
+# API Endpoints
+paths:
+  # Customer Endpoints
+  /customers:
+    get:
+      tags:
+        - "customers"
+      summary: "List all customers"
+      description: "Retrieve a list of all customers (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Customers retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CreateCustomerResponse"
+    post:
+      tags:
+        - "customers"
+      summary: "Create a new customer"
+      description: "Register a new customer in the mechanic shop system."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Customer registration information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCustomerPayload"
+      responses:
+        201:
+          description: "Customer created successfully"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+
+  /customers/login:
+    post:
+      tags:
+        - "customers"
+      summary: "Customer login"
+      description: "Validates customer credentials and returns an authentication token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+
+  /customers/search:
+    get:
+      tags:
+        - "customers"
+      summary: "Search customers"
+      description: "Search for customers by name or email (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "query"
+          name: "name"
+          type: "string"
+          required: true
+          description: "Search query for name"
+      responses:
+        200:
+          description: "Search results"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CreateCustomerResponse"
+
+  /customers/{customer_id}:
+    get:
+      tags:
+        - "customers"
+      summary: "Get a customer"
+      description: "Retrieve details of a specific customer by ID (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "customer_id"
+          type: "integer"
+          required: true
+          description: "ID of the customer"
+      responses:
+        200:
+          description: "Customer retrieved successfully"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+    put:
+      tags:
+        - "customers"
+      summary: "Update a customer"
+      description: "Update an existing customer's information (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "customer_id"
+          type: "integer"
+          required: true
+          description: "ID of the customer"
+        - in: "body"
+          name: "body"
+          description: "Updated customer information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCustomerPayload"
+      responses:
+        200:
+          description: "Customer updated successfully"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+    delete:
+      tags:
+        - "customers"
+      summary: "Delete a customer"
+      description: "Remove a customer from the system (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "customer_id"
+          type: "integer"
+          required: true
+          description: "ID of the customer"
+      responses:
+        200:
+          description: "Customer deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+
+  # Service Ticket Endpoints
+  /service-tickets:
+    get:
+      tags:
+        - "service-tickets"
+      summary: "List all service tickets"
+      description: "Retrieve a list of all service tickets."
+      responses:
+        200:
+          description: "Service tickets retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceTicketResponse"
+    post:
+      tags:
+        - "service-tickets"
+      summary: "Create a service ticket"
+      description: "Create a new service ticket (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Service ticket information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateServiceTicketPayload"
+      responses:
+        201:
+          description: "Service ticket created successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+
+  /service-tickets/my-tickets:
+    get:
+      tags:
+        - "service-tickets"
+      summary: "List customer's service tickets"
+      description: "Retrieve all service tickets for the authenticated customer."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Customer tickets retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceTicketResponse"
+
+  /service-tickets/{ticket_id}:
+    get:
+      tags:
+        - "service-tickets"
+      summary: "Get a service ticket"
+      description: "Retrieve details of a specific service ticket by ID."
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+      responses:
+        200:
+          description: "Service ticket retrieved successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+    put:
+      tags:
+        - "service-tickets"
+      summary: "Update a service ticket"
+      description: "Update an existing service ticket (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+        - in: "body"
+          name: "body"
+          description: "Updated service ticket information"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateServiceTicketPayload"
+      responses:
+        200:
+          description: "Service ticket updated successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+    delete:
+      tags:
+        - "service-tickets"
+      summary: "Delete a service ticket"
+      description: "Remove a service ticket from the system."
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+      responses:
+        200:
+          description: "Service ticket deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+
+  /service-tickets/{ticket_id}/assign-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - "service-tickets"
+      summary: "Assign mechanic to service ticket"
+      description: "Assign a mechanic to a specific service ticket."
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic to assign"
+      responses:
+        200:
+          description: "Mechanic assigned successfully"
+
+  /service-tickets/{ticket_id}/remove-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - "service-tickets"
+      summary: "Remove mechanic from service ticket"
+      description: "Remove a mechanic from a specific service ticket."
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic to remove"
+      responses:
+        200:
+          description: "Mechanic removed successfully"
+
+  /service-tickets/{ticket_id}/edit-mechanics:
+    put:
+      tags:
+        - "service-tickets"
+      summary: "Edit mechanics on service ticket"
+      description: "Add or remove multiple mechanics from a service ticket (requires customer authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+        - in: "body"
+          name: "body"
+          description: "Mechanics to add or remove"
+          required: true
+          schema:
+            $ref: "#/definitions/EditMechanicsPayload"
+      responses:
+        200:
+          description: "Mechanics updated successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+
+  /service-tickets/{ticket_id}/labor:
+    post:
+      tags:
+        - "service-tickets"
+      summary: "Log labor hours"
+      description: "Log labor hours for a mechanic on a service ticket (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+        - in: "body"
+          name: "body"
+          description: "Labor log information"
+          required: true
+          schema:
+            $ref: "#/definitions/LaborLogPayload"
+      responses:
+        201:
+          description: "Labor hours logged successfully"
+          schema:
+            $ref: "#/definitions/LaborLogResponse"
+
+  /service-tickets/labor/{labor_log_id}:
+    put:
+      tags:
+        - "service-tickets"
+      summary: "Update labor log"
+      description: "Update labor hours logged by a mechanic (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "labor_log_id"
+          type: "integer"
+          required: true
+          description: "ID of the labor log"
+        - in: "body"
+          name: "body"
+          description: "Updated labor hours"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateLaborLogPayload"
+      responses:
+        200:
+          description: "Labor log updated successfully"
+          schema:
+            $ref: "#/definitions/LaborLogResponse"
+    delete:
+      tags:
+        - "service-tickets"
+      summary: "Delete labor log"
+      description: "Remove a labor log entry."
+      parameters:
+        - in: "path"
+          name: "labor_log_id"
+          type: "integer"
+          required: true
+          description: "ID of the labor log"
+      responses:
+        200:
+          description: "Labor log deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+
+  # Mechanic Endpoints
+  /mechanics:
+    get:
+      tags:
+        - "mechanics"
+      summary: "List all mechanics"
+      description: "Retrieve a list of all mechanics (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Mechanics retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MechanicResponse"
+    post:
+      tags:
+        - "mechanics"
+      summary: "Create a new mechanic"
+      description: "Add a new mechanic to the system."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Mechanic information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMechanicPayload"
+      responses:
+        201:
+          description: "Mechanic created successfully"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+
+  /mechanics/login:
+    post:
+      tags:
+        - "mechanics"
+      summary: "Mechanic login"
+      description: "Validates mechanic credentials and returns an authentication token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+
+  /mechanics/{mechanic_id}:
+    get:
+      tags:
+        - "mechanics"
+      summary: "Get a mechanic"
+      description: "Retrieve details of a specific mechanic by ID (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic"
+      responses:
+        200:
+          description: "Mechanic retrieved successfully"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+    put:
+      tags:
+        - "mechanics"
+      summary: "Update a mechanic"
+      description: "Update an existing mechanic's information (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic"
+        - in: "body"
+          name: "body"
+          description: "Updated mechanic information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMechanicPayload"
+      responses:
+        200:
+          description: "Mechanic updated successfully"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+    delete:
+      tags:
+        - "mechanics"
+      summary: "Delete a mechanic"
+      description: "Remove a mechanic from the system (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic"
+      responses:
+        200:
+          description: "Mechanic deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+
+  /mechanics/{mechanic_id}/service_tickets:
+    get:
+      tags:
+        - "mechanics"
+      summary: "List mechanic's service tickets"
+      description: "Retrieve all service tickets assigned to a specific mechanic (requires mechanic authentication)."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+          description: "ID of the mechanic"
+      responses:
+        200:
+          description: "Mechanic's service tickets retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceTicketResponse"
+
+  /mechanics/reports/top_labor_by_ticket:
+    get:
+      tags:
+        - "mechanics"
+      summary: "Top labor hours by ticket report"
+      description: "Get a report of tickets with the most labor hours logged."
+      responses:
+        200:
+          description: "Labor report retrieved successfully"
+          schema:
+            $ref: "#/definitions/LaborReportResponse"
+
+  /mechanics/reports/most_tickets_worked:
+    get:
+      tags:
+        - "mechanics"
+      summary: "Most tickets worked report"
+      description: "Get a report of mechanics who worked on the most tickets."
+      responses:
+        200:
+          description: "Mechanic productivity report retrieved successfully"
+          schema:
+            $ref: "#/definitions/ProductivityReportResponse"
+
+  # Inventory Endpoints
+  /inventory:
+    get:
+      tags:
+        - "inventory"
+      summary: "List all parts"
+      description: "Retrieve a list of all parts in inventory."
+      responses:
+        200:
+          description: "Parts retrieved successfully"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PartResponse"
+    post:
+      tags:
+        - "inventory"
+      summary: "Create a new part"
+      description: "Add a new part to the inventory."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Part information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreatePartPayload"
+      responses:
+        201:
+          description: "Part created successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+
+  /inventory/{part_id}:
+    get:
+      tags:
+        - "inventory"
+      summary: "Get a part"
+      description: "Retrieve details of a specific part by ID."
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+          description: "ID of the part"
+      responses:
+        200:
+          description: "Part retrieved successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+    put:
+      tags:
+        - "inventory"
+      summary: "Update a part"
+      description: "Update an existing part in inventory."
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+          description: "ID of the part"
+        - in: "body"
+          name: "body"
+          description: "Updated part information"
+          required: true
+          schema:
+            $ref: "#/definitions/CreatePartPayload"
+      responses:
+        200:
+          description: "Part updated successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+    delete:
+      tags:
+        - "inventory"
+      summary: "Delete a part"
+      description: "Remove a part from inventory."
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+          description: "ID of the part"
+      responses:
+        200:
+          description: "Part deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+
+  /inventory/{part_id}/remove_stock:
+    post:
+      tags:
+        - "inventory"
+      summary: "Remove stock from a part"
+      description: "Reduce the quantity of a specific part in stock."
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+          description: "ID of the part"
+        - in: "body"
+          name: "body"
+          description: "Quantity to remove"
+          required: true
+          schema:
+            $ref: "#/definitions/RemoveStockPayload"
+      responses:
+        200:
+          description: "Stock removed successfully"
+          schema:
+            $ref: "#/definitions/StockUpdateResponse"
+
+  /inventory/{part_id}/add-to-ticket/{ticket_id}:
+    post:
+      tags:
+        - "inventory"
+      summary: "Add part to service ticket"
+      description: "Add a part to a specific service ticket."
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+          description: "ID of the part"
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+          description: "ID of the service ticket"
+      responses:
+        200:
+          description: "Part added to ticket successfully"
+
+  # Utility Endpoints
+  /fakedata/seed-database:
+    post:
+      tags:
+        - "fakedata"
+      summary: "Seed database with fake data"
+      description: "Clear existing data and populate database with fake data for testing."
+      responses:
+        200:
+          description: "Database seeded successfully"
+          schema:
+            $ref: "#/definitions/SeedResponse"
+
+# Data Schemas
+definitions:
+  # Authentication Schemas
+  LoginCredentials:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - email
+      - password
+
+  LoginResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      status:
+        type: "string"
+      token:
+        type: "string"
+
+  # Customer Schemas
+  CreateCustomerPayload:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      name:
+        type: "string"
+      password:
+        type: "string"
+      phone:
+        type: "string"
+    required:
+      - email
+      - name
+      - password
+      - phone
+
+  CreateCustomerResponse:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      phone:
+        type: "string"
+
+  # Service Ticket Schemas
+  CreateServiceTicketPayload:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      service_date:
+        type: "string"
+        format: "date"
+      VIN:
+        type: "string"
+    required:
+      - description
+      - service_date
+      - VIN
+
+  ServiceTicketResponse:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+      description:
+        type: "string"
+      labor_logs:
+        type: "array"
+        items:
+          type: "object"
+      mechanics:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            email:
+              type: "string"
+            id:
+              type: "integer"
+            name:
+              type: "string"
+      service_date:
+        type: "string"
+      ticket_id:
+        type: "integer"
+      VIN:
+        type: "string"
+
+  UpdateServiceTicketPayload:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      service_date:
+        type: "string"
+        format: "date"
+      VIN:
+        type: "string"
+
+  LaborLogPayload:
+    type: "object"
+    properties:
+      hours_worked:
+        type: "number"
+      mechanic_id:
+        type: "integer"
+    required:
+      - hours_worked
+      - mechanic_id
+
+  LaborLogResponse:
+    type: "object"
+    properties:
+      date_logged:
+        type: "string"
+      hours_worked:
+        type: "number"
+      id:
+        type: "integer"
+      mechanic_id:
+        type: "integer"
+      ticket_id:
+        type: "integer"
+
+  UpdateLaborLogPayload:
+    type: "object"
+    properties:
+      hours_worked:
+        type: "number"
+    required:
+      - hours_worked
+
+  EditMechanicsPayload:
+    type: "object"
+    properties:
+      add_mechanic_ids:
+        type: "array"
+        items:
+          type: "integer"
+      remove_mechanic_ids:
+        type: "array"
+        items:
+          type: "integer"
+
+  # Mechanic Schemas
+  CreateMechanicPayload:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      name:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "number"
+      password:
+        type: "string"
+    required:
+      - email
+      - name
+      - phone
+      - salary
+      - password
+
+  MechanicResponse:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "number"
+      password:
+        type: "string"
+
+  LaborReportResponse:
+    type: "object"
+    properties:
+      mechanics_count:
+        type: "integer"
+      ticket_id:
+        type: "integer"
+      total_hours:
+        type: "number"
+
+  ProductivityReportResponse:
+    type: "object"
+    properties:
+      mechanic_id:
+        type: "integer"
+      mechanic_name:
+        type: "string"
+      tickets_worked:
+        type: "integer"
+      total_hours:
+        type: "number"
+
+  # Inventory Schemas
+  CreatePartPayload:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      price:
+        type: "number"
+      quantity_in_stock:
+        type: "integer"
+      description:
+        type: "string"
+
+    required:
+      - name
+      - price
+      - quantity_in_stock
+      - description
+
+  PartResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      price:
+        type: "number"
+      quantity_in_stock:
+        type: "integer"
+      description:
+        type: "string"
+
+  RemoveStockPayload:
+    type: "object"
+    properties:
+      quantity:
+        type: "integer"
+    required:
+      - quantity
+
+  StockUpdateResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      new_quantity_in_stock:
+        type: "integer"
+
+  # Utility Schemas
+  DeleteResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  SeedResponse:
+    type: "object"
+    properties:
+      customers_created:
+        type: "integer"
+      mechanics_created:
+        type: "integer"
+      message:
+        type: "string"
+      parts_created:
+        type: "integer"
+      tickets_created:
+        type: "integer"

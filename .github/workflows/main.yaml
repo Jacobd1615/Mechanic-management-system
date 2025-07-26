@@ -1,0 +1,80 @@
+name: Flask CI
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies and print debug info
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          echo "Python Version: $(python --version)"
+          echo "Working Directory: $(pwd)"
+          echo "Contents of Working Directory: $(ls -l)"
+          echo "Contents of site-packages: $(ls -l venv/lib/python*/site-packages)"
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies and run tests
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m unittest discover -s tests -p 'test_*.py'
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}

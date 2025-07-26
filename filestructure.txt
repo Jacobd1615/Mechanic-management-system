@@ -1,0 +1,31 @@
+/project
+├── app.py
+├── config.py
+├── requirement.txt
+├── filestructure.txt
+├── /app
+│   ├── __init__.py - create_app() lives here
+│   ├── extensions.py
+│   ├── models.py
+│   ├── /blueprints
+│   │   ├── /inventory
+│   │   │   ├── __init__.py
+│   │   │   ├── routes.py
+│   │   │   └── schemas.py
+│   │   ├── /customers
+│   │   │   ├── __init__.py
+│   │   │   ├── routes.py
+│   │   │   └── schemas.py
+│   │   ├── /mechanics
+│   │   │   ├── __init__.py
+│   │   │   ├── routes.py
+│   │   │   └── schemas.py
+│   │   ├── /service_tickets
+│   │   │   ├── __init__.py
+│   │   │   ├── routes.py
+│   │   │   └── schemas.py
+│   │   └── /fakedata
+│   │       ├── __init__.py
+│   │       └── routes.py
+│   └── /utils
+│       └── util.py - File for token functions

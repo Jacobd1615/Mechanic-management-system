@@ -1,0 +1,62 @@
+# Customer schemas will be defined here
+import re
+from marshmallow import ValidationError, fields, validates
+from app.extensions import ma
+from app.models import Customer
+
+
+# Defining the Marshmallow schemas for serialization and deserialization
+class CustomerSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Customer
+        include_fk = True
+        exclude = ("service_tickets",)
+        load_instance = True
+
+    @validates("email")
+    def validate_email(self, value, **kwargs):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
+            raise ValidationError("Invalid email format.")
+
+    @validates("phone")
+    def validate_phone(self, value, **kwargs):
+        # US phone number format (e.g., 123-456-7890, (123) 456-7890, 1234567890)
+        if not re.match(r"^\(?(\d{3})\)?[-. ]?(\d{3})[-. ]?(\d{4})$", value):
+            raise ValidationError("Invalid US phone number format.")
+
+    @validates("password")
+    def validate_password(self, value, **kwargs):
+        if len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+
+
+class CustomerUpdateSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Customer
+        include_fk = True
+        load_instance = True
+
+    username = fields.String(dump_only=True)
+    password = fields.String(load_only=True, required=False)
+
+    @validates("email")
+    def validate_email(self, value, **kwargs):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
+            raise ValidationError("Invalid email format.")
+
+    @validates("phone")
+    def validate_phone(self, value, **kwargs):
+        if not re.match(r"^\(?(\d{3})\)?[-. ]?(\d{3})[-. ]?(\d{4})$", value):
+            raise ValidationError("Invalid US phone number format.")
+
+    @validates("password")
+    def validate_password(self, value, **kwargs):
+        if value and len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+
+
+# creating an instance of the schema
+customer_schema = CustomerSchema()
+customers_schema = CustomerSchema(many=True, exclude=("password",))
+login_schema = CustomerSchema(only=("email", "password"), load_instance=False)
+customer_update_schema = CustomerUpdateSchema()
