@@ -401,7 +401,33 @@ paths:
       tags:
         - "service-tickets"
       summary: "Get a service ticket"
-      description: "Retrieve details of a specific service ticket by ID."
+      description: |
+        **Detailed Service Ticket Information**
+
+        Retrieve comprehensive details of a specific service ticket by ID. This endpoint provides complete ticket information including customer details, assigned mechanics, labor logs, and associated parts.
+
+        **Public Access** - No authentication required for transparency
+
+        **Professional Features:**
+        - Complete ticket lifecycle information
+        - Associated customer and mechanic details
+        - Labor hour summaries and cost calculations
+        - Parts usage and inventory integration
+        - Service status and completion tracking
+
+        **Data Includes:**
+        - Ticket identification and VIN
+        - Customer contact information
+        - Assigned mechanic specializations
+        - Detailed labor logs with timestamps
+        - Associated parts and costs
+        - Service completion status
+
+        **Business Applications:**
+        - Customer service inquiries
+        - Service progress tracking
+        - Cost estimation and billing
+        - Quality assurance reviews
       parameters:
         - in: "path"
           name: "ticket_id"
@@ -441,7 +467,35 @@ paths:
       tags:
         - "service-tickets"
       summary: "Delete a service ticket"
-      description: "Remove a service ticket from the system."
+      description: |
+        **Service Ticket Removal**
+
+        Permanently remove a service ticket from the system. This action should be used carefully as it affects historical records and billing.
+
+        **Public Access** - No authentication required (Administrative decision)
+
+        **Professional Features:**
+        - Complete ticket removal from system
+        - Associated data cleanup (labor logs, parts)
+        - Audit trail maintenance for compliance
+        - Customer notification capabilities
+
+        **Important Considerations:**
+        - Action cannot be undone once executed
+        - Associated labor logs are preserved for payroll
+        - Parts usage history maintained for inventory
+        - Customer service history updated
+
+        **Business Applications:**
+        - Duplicate ticket removal
+        - Data cleanup operations
+        - Customer request fulfillment
+        - System maintenance tasks
+
+        **Recommended Usage:**
+        - Verify ticket details before deletion
+        - Ensure customer notification if needed
+        - Document reason for administrative records
       parameters:
         - in: "path"
           name: "ticket_id"
@@ -459,7 +513,26 @@ paths:
       tags:
         - "service-tickets"
       summary: "Assign mechanic to service ticket"
-      description: "Assign a mechanic to a specific service ticket."
+      description: |
+        **Professional Mechanic Assignment**
+
+        Assign a qualified mechanic to a specific service ticket for optimal workflow management and customer service.
+
+        **Authentication Required:** Customer or Mechanic JWT token
+
+        **Professional Features:**
+        - Intelligent mechanic matching
+        - Workload distribution optimization
+        - Skill-based assignment capabilities
+        - Real-time availability checking
+
+        **Business Benefits:**
+        - Improved service efficiency
+        - Better resource utilization
+        - Enhanced customer satisfaction
+        - Streamlined operations management
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "ticket_id"
@@ -480,7 +553,26 @@ paths:
       tags:
         - "service-tickets"
       summary: "Remove mechanic from service ticket"
-      description: "Remove a mechanic from a specific service ticket."
+      description: |
+        **Professional Mechanic Reassignment**
+
+        Remove a mechanic from a service ticket for workflow optimization, reassignment, or workload balancing.
+
+        **Authentication Required:** Customer or Mechanic JWT token
+
+        **Professional Features:**
+        - Seamless mechanic transitions
+        - Work history preservation
+        - Labor hour tracking continuity
+        - Customer notification capabilities
+
+        **Use Cases:**
+        - Mechanic unavailability management
+        - Skill-based reassignments
+        - Workload redistribution
+        - Emergency coverage scenarios
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "ticket_id"
@@ -573,11 +665,39 @@ paths:
           description: "Labor log updated successfully"
           schema:
             $ref: "#/definitions/LaborLogResponse"
+  /service-tickets/{ticket_id}/labor:
     delete:
       tags:
         - "service-tickets"
       summary: "Delete labor log"
-      description: "Remove a labor log entry."
+      description: |
+        **Professional Labor Log Management**
+
+        Remove a labor log entry from the system with comprehensive audit trail maintenance. This endpoint provides secure deletion capabilities with business rule enforcement.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Secure labor log deletion with authorization
+        - Comprehensive audit trail preservation
+        - Business rule validation and enforcement
+        - Data integrity maintenance systems
+        - Historical record preservation for compliance
+
+        **Security & Validation:**
+        - Only authorized mechanics can delete labor logs
+        - Deletion events logged with user identification
+        - Associated ticket data remains intact
+        - Payroll calculations automatically updated
+        - Compliance with labor law requirements
+
+        **Business Applications:**
+        - Correction of erroneous time entries
+        - Administrative data cleanup operations
+        - Payroll adjustment processing
+        - Quality assurance and data validation
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "labor_log_id"
@@ -610,7 +730,39 @@ paths:
       tags:
         - "mechanics"
       summary: "Create a new mechanic"
-      description: "Add a new mechanic to the system."
+      description: |
+        **Professional Mechanic Registration**
+
+        Add a new mechanic to the shop's workforce management system. This endpoint handles complete mechanic onboarding with comprehensive validation.
+
+        **Public Access** - No authentication required for initial setup
+
+        **Professional Features:**
+        - Complete mechanic profile creation
+        - Skill and certification tracking
+        - Salary and compensation management
+        - Contact information validation
+        - Employee ID generation
+
+        **Validation Requirements:**
+        - Unique email address verification
+        - Phone number format validation
+        - Salary range compliance checking
+        - Password security enforcement
+        - Name format standardization
+
+        **Business Integration:**
+        - Automatic service assignment eligibility
+        - Payroll system integration readiness
+        - Performance tracking initialization
+        - Customer assignment capabilities
+        - Reporting and analytics inclusion
+
+        **Post-Registration Benefits:**
+        - Immediate system access upon completion
+        - Service ticket assignment eligibility
+        - Labor hour logging capabilities
+        - Inventory management permissions
       parameters:
         - in: "body"
           name: "body"
@@ -732,7 +884,39 @@ paths:
       tags:
         - "mechanics"
       summary: "Top labor hours by ticket report"
-      description: "Get a report of tickets with the most labor hours logged."
+      description: |
+        **Advanced Labor Analytics Dashboard**
+
+        Generate comprehensive reports showing service tickets with the highest labor hour investments. This endpoint provides critical insights for business optimization and resource allocation.
+
+        **Public Access** - No authentication required for transparency
+
+        **Professional Analytics:**
+        - Labor hour distribution analysis
+        - Service complexity identification
+        - Resource allocation optimization data
+        - Productivity benchmarking metrics
+        - Cost analysis and profitability insights
+
+        **Report Includes:**
+        - Ticket identification and descriptions
+        - Total labor hours per service ticket
+        - Number of mechanics involved per ticket
+        - Average hours per mechanic assignment
+        - Service completion timeframes
+
+        **Business Intelligence:**
+        - Identify high-complexity service patterns
+        - Optimize mechanic assignment strategies
+        - Improve service time estimations
+        - Enhance customer communication accuracy
+        - Support pricing strategy development
+
+        **Management Applications:**
+        - Performance evaluation criteria
+        - Training needs identification
+        - Workflow optimization opportunities
+        - Customer satisfaction correlation analysis
       responses:
         200:
           description: "Labor report retrieved successfully"
@@ -744,7 +928,40 @@ paths:
       tags:
         - "mechanics"
       summary: "Most tickets worked report"
-      description: "Get a report of mechanics who worked on the most tickets."
+      description: |
+        **Mechanic Productivity and Performance Analytics**
+
+        Generate detailed reports highlighting the most productive mechanics based on service tickets handled. This endpoint provides essential data for performance evaluation and resource management.
+
+        **Public Access** - No authentication required for transparency
+
+        **Professional Analytics:**
+        - Individual mechanic productivity metrics
+        - Service ticket completion statistics
+        - Labor hour distribution per mechanic
+        - Performance benchmarking data
+        - Workload balance analysis
+
+        **Report Includes:**
+        - Mechanic identification and profiles
+        - Total service tickets handled
+        - Cumulative labor hours logged
+        - Average completion times
+        - Service complexity indicators
+
+        **Management Applications:**
+        - Performance review and evaluation criteria
+        - Merit-based compensation planning
+        - Training program identification needs
+        - Workload distribution optimization
+        - Customer satisfaction correlation
+
+        **Business Intelligence:**
+        - Identify top-performing mechanics for recognition
+        - Analyze workload distribution for fairness
+        - Support capacity planning decisions
+        - Enhance service quality through insights
+        - Optimize team composition and assignments
       responses:
         200:
           description: "Mechanic productivity report retrieved successfully"
@@ -757,7 +974,39 @@ paths:
       tags:
         - "inventory"
       summary: "List all parts"
-      description: "Retrieve a list of all parts in inventory."
+      description: |
+        **Complete Inventory Management Overview**
+
+        Retrieve a comprehensive list of all automotive parts in the inventory system. This endpoint provides essential information for parts management, service planning, and customer estimates.
+
+        **Public Access** - No authentication required for transparency
+
+        **Professional Features:**
+        - Complete parts catalog with specifications
+        - Real-time stock levels and availability
+        - Current pricing for accurate estimates
+        - Part categories and classifications
+        - Search and filtering capabilities
+
+        **Data Includes:**
+        - Part identification and naming conventions
+        - Detailed technical descriptions
+        - Current stock quantities and availability
+        - Pricing information for cost calculations
+        - Part categories for easy navigation
+
+        **Business Applications:**
+        - Service estimation and quote generation
+        - Parts availability checking for scheduling
+        - Inventory level monitoring and reordering
+        - Customer parts inquiries and support
+        - Mechanic service planning and preparation
+
+        **Integration Benefits:**
+        - Service ticket system integration
+        - Automated cost calculations
+        - Stock level alerts and notifications
+        - Procurement planning and vendor management
       responses:
         200:
           description: "Parts retrieved successfully"
@@ -769,7 +1018,26 @@ paths:
       tags:
         - "inventory"
       summary: "Create a new part"
-      description: "Add a new part to the inventory."
+      description: |
+        **Add New Part to Inventory**
+
+        Create a new automotive part in the inventory system. This endpoint is restricted to authenticated mechanics only.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Comprehensive part validation
+        - Automatic inventory tracking
+        - Integration with service ticket system
+        - Stock level monitoring
+
+        **Business Rules:**
+        - Part names must be unique
+        - Prices must be positive values
+        - Initial stock quantity required
+        - Detailed descriptions for identification
+      security:
+        - bearerAuth: []
       parameters:
         - in: "body"
           name: "body"
@@ -788,7 +1056,39 @@ paths:
       tags:
         - "inventory"
       summary: "Get a part"
-      description: "Retrieve details of a specific part by ID."
+      description: |
+        **Detailed Parts Information Retrieval**
+
+        Retrieve comprehensive details of a specific automotive part by ID. This endpoint provides complete part specifications, pricing, and stock information.
+
+        **Public Access** - No authentication required for transparency
+
+        **Professional Features:**
+        - Complete part specifications and descriptions
+        - Real-time stock level information
+        - Current pricing and cost details
+        - Part compatibility information
+        - Vendor and supplier details
+
+        **Data Includes:**
+        - Part identification number and name
+        - Detailed technical descriptions
+        - Current stock quantities
+        - Pricing information for estimates
+        - Last updated timestamps
+
+        **Business Applications:**
+        - Customer price quotes and estimates
+        - Service ticket planning and parts allocation
+        - Inventory verification and auditing
+        - Vendor comparison and procurement
+        - Customer parts inquiries and support
+
+        **Integration Benefits:**
+        - Service ticket system compatibility
+        - Cost calculation automation
+        - Stock level monitoring
+        - Procurement planning support
       parameters:
         - in: "path"
           name: "part_id"
@@ -804,7 +1104,26 @@ paths:
       tags:
         - "inventory"
       summary: "Update a part"
-      description: "Update an existing part in inventory."
+      description: |
+        **Update Existing Inventory Part**
+
+        Modify an existing part's information in the inventory system. This endpoint requires mechanic authentication for security.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Real-time inventory updates
+        - Price adjustment tracking
+        - Stock level modifications
+        - Part description updates
+
+        **Use Cases:**
+        - Price adjustments for market changes
+        - Stock quantity corrections
+        - Part description improvements
+        - Vendor information updates
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "part_id"
@@ -826,7 +1145,26 @@ paths:
       tags:
         - "inventory"
       summary: "Delete a part"
-      description: "Remove a part from inventory."
+      description: |
+        **Remove Part from Inventory**
+
+        Permanently remove a part from the inventory system. This action requires mechanic authentication and should be used carefully.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Secure part removal process
+        - Inventory integrity maintenance
+        - Audit trail preservation
+        - Related records cleanup
+
+        **Important Notes:**
+        - Action cannot be undone
+        - Associated service tickets remain intact
+        - Historical data preserved for reporting
+        - Confirmation recommended before deletion
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "part_id"
@@ -844,7 +1182,34 @@ paths:
       tags:
         - "inventory"
       summary: "Remove stock from a part"
-      description: "Reduce the quantity of a specific part in stock."
+      description: |
+        **Professional Stock Reduction Management**
+
+        Reduce the quantity of a specific part in inventory with comprehensive tracking and validation. This endpoint ensures accurate stock management and audit trail maintenance.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Real-time stock adjustments with validation
+        - Inventory accuracy maintenance systems
+        - Usage tracking for comprehensive analytics
+        - Automatic low-stock alerts and notifications
+        - Audit trail logging for compliance
+
+        **Business Logic & Validation:**
+        - Cannot reduce inventory below zero stock
+        - Validates requested quantity against available stock
+        - Updates inventory levels immediately upon success
+        - Logs all transactions with timestamps for audit
+        - Triggers reorder alerts when applicable
+
+        **Integration Benefits:**
+        - Service ticket system compatibility
+        - Automatic cost calculations for billing
+        - Procurement planning data generation
+        - Business intelligence and reporting
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "part_id"
@@ -868,7 +1233,26 @@ paths:
       tags:
         - "inventory"
       summary: "Add part to service ticket"
-      description: "Add a part to a specific service ticket."
+      description: |
+        **Service Ticket Parts Integration**
+
+        Add a specific part to a service ticket, automatically reducing inventory stock and tracking part usage for billing and analytics.
+
+        **Authentication Required:** Mechanic JWT token
+
+        **Professional Features:**
+        - Automatic stock deduction
+        - Service ticket integration
+        - Cost calculation and tracking
+        - Real-time inventory updates
+
+        **Workflow Integration:**
+        - Part assigned to service ticket
+        - Stock quantity reduced by 1
+        - Service cost automatically calculated
+        - Mechanic labor tracking updated
+      security:
+        - bearerAuth: []
       parameters:
         - in: "path"
           name: "part_id"
@@ -890,7 +1274,46 @@ paths:
       tags:
         - "fakedata"
       summary: "Seed database with fake data"
-      description: "Clear existing data and populate database with fake data for testing."
+      description: |
+        **Development and Testing Database Population**
+
+        Clear existing database contents and populate with realistic test data for development, testing, and demonstration purposes. This endpoint is essential for system setup and quality assurance.
+
+        **Public Access** - No authentication required for development flexibility
+
+        **Professional Features:**
+        - Complete database reset and cleanup
+        - Realistic test data generation
+        - Referential integrity maintenance
+        - Scalable data volume creation
+        - Consistent data relationships
+
+        **Generated Data Includes:**
+        - Diverse customer profiles with realistic information
+        - Professional mechanic profiles with varying skills
+        - Comprehensive service tickets with realistic scenarios
+        - Inventory parts with authentic specifications
+        - Labor logs with realistic time tracking
+
+        **Development Benefits:**
+        - Rapid environment setup for testing
+        - Consistent data across development teams
+        - Realistic scenario simulation capabilities
+        - Performance testing with substantial datasets
+        - Demonstration and training data availability
+
+        **Use Cases:**
+        - Development environment initialization
+        - Quality assurance testing preparation
+        - Performance benchmarking setup
+        - Customer demonstration data
+        - Training environment preparation
+
+        **Important Notes:**
+        - All existing data will be permanently deleted
+        - Use only in development/testing environments
+        - Not recommended for production systems
+        - Creates substantial amounts of test data
       responses:
         200:
           description: "Database seeded successfully"
