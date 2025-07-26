@@ -11,8 +11,5 @@ with app.app_context():
     db.create_all()
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 # seeding database
-# curl -X POST http://127.0.0.1:5000/fakedata/seed-database
+# curl -X POST https://mechanic-management-system.onrender.com/fakedata/seed-database
