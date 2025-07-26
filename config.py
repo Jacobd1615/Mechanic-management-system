@@ -1,12 +1,9 @@
 import os
 
-# Try to load dotenv if available (for local development)
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    # dotenv not installed, skip loading (for production/CI)
-    pass
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 class DevelopmentConfig:
