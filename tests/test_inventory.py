@@ -1,5 +1,5 @@
 from app import create_app
-from app.models import db, Part, ServiceTicket, Customer
+from app.models import db, Part, ServiceTicket, Customer, Mechanic
 from app.utils.util import encode_token
 from datetime import date
 import unittest
@@ -17,6 +17,15 @@ class TestInventory(unittest.TestCase):
             password="testpassword123",
         )
 
+        # Create test mechanic for JWT authentication
+        self.mechanic = Mechanic(
+            name="test_mechanic",
+            email="mechanic@email.com",
+            phone="222-222-2222",
+            password="testpassword123",
+            salary=50000.00,
+        )
+
         # Create test part
         self.part = Part(
             name="Brake Pad",
@@ -30,12 +39,18 @@ class TestInventory(unittest.TestCase):
             db.create_all()
             # Add test data
             db.session.add(self.customer)
+            db.session.add(self.mechanic)
             db.session.add(self.part)
             db.session.commit()
 
             # Store IDs for later use
             self.customer_id = self.customer.id
+            self.mechanic_id = self.mechanic.id
             self.part_id = self.part.part_id
+
+            # Generate JWT token for mechanic authentication
+            self.mechanic_token = encode_token(self.mechanic_id, "mechanic")
+            self.auth_headers = {"Authorization": f"Bearer {self.mechanic_token}"}
 
             # Create test service ticket for integration tests
             self.service_ticket = ServiceTicket(
@@ -60,7 +75,9 @@ class TestInventory(unittest.TestCase):
             "quantity_in_stock": 50,
         }
 
-        response = self.client.post("/inventory/", json=part_data)
+        response = self.client.post(
+            "/inventory/", json=part_data, headers=self.auth_headers
+        )
         self.assertEqual(response.status_code, 201)
 
         data = response.get_json()
@@ -77,7 +94,9 @@ class TestInventory(unittest.TestCase):
             # Missing price and quantity_in_stock
         }
 
-        response = self.client.post("/inventory/", json=invalid_data)
+        response = self.client.post(
+            "/inventory/", json=invalid_data, headers=self.auth_headers
+        )
         self.assertEqual(response.status_code, 400)
 
         response_data = response.get_json()
@@ -115,7 +134,9 @@ class TestInventory(unittest.TestCase):
             "quantity_in_stock": 30,
         }
 
-        response = self.client.put(f"/inventory/{self.part_id}", json=update_data)
+        response = self.client.put(
+            f"/inventory/{self.part_id}", json=update_data, headers=self.auth_headers
+        )
         self.assertEqual(response.status_code, 200)
 
         data = response.get_json()
@@ -127,12 +148,16 @@ class TestInventory(unittest.TestCase):
         """Test updating part with invalid data"""
         invalid_data = {"price": "not_a_number"}  # Invalid price format
 
-        response = self.client.put(f"/inventory/{self.part_id}", json=invalid_data)
+        response = self.client.put(
+            f"/inventory/{self.part_id}", json=invalid_data, headers=self.auth_headers
+        )
         self.assertEqual(response.status_code, 400)
 
     def test_delete_part(self):
         """Test deleting an inventory part"""
-        response = self.client.delete(f"/inventory/{self.part_id}")
+        response = self.client.delete(
+            f"/inventory/{self.part_id}", headers=self.auth_headers
+        )
         self.assertEqual(response.status_code, 200)
 
         # Verify part is deleted
@@ -141,7 +166,7 @@ class TestInventory(unittest.TestCase):
 
     def test_delete_nonexistent_part(self):
         """Test deleting a part that doesn't exist"""
-        response = self.client.delete("/inventory/99999")
+        response = self.client.delete("/inventory/99999", headers=self.auth_headers)
         self.assertEqual(response.status_code, 404)
 
     def test_remove_stock(self):
@@ -150,7 +175,9 @@ class TestInventory(unittest.TestCase):
         stock_data = {"quantity": 5}
 
         response = self.client.post(
-            f"/inventory/{self.part_id}/remove_stock", json=stock_data
+            f"/inventory/{self.part_id}/remove_stock",
+            json=stock_data,
+            headers=self.auth_headers,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -165,7 +192,9 @@ class TestInventory(unittest.TestCase):
         excessive_stock = {"quantity": 50}
 
         response = self.client.post(
-            f"/inventory/{self.part_id}/remove_stock", json=excessive_stock
+            f"/inventory/{self.part_id}/remove_stock",
+            json=excessive_stock,
+            headers=self.auth_headers,
         )
         self.assertEqual(response.status_code, 400)
 
@@ -177,7 +206,9 @@ class TestInventory(unittest.TestCase):
         add_data = {"quantity": 2}
 
         response = self.client.post(
-            f"/inventory/{self.part_id}/add-to-ticket/{self.ticket_id}", json=add_data
+            f"/inventory/{self.part_id}/add-to-ticket/{self.ticket_id}",
+            json=add_data,
+            headers=self.auth_headers,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -191,7 +222,9 @@ class TestInventory(unittest.TestCase):
         add_data = {"quantity": 1}
 
         response = self.client.post(
-            f"/inventory/{self.part_id}/add-to-ticket/99999", json=add_data
+            f"/inventory/{self.part_id}/add-to-ticket/99999",
+            json=add_data,
+            headers=self.auth_headers,
         )
         self.assertEqual(response.status_code, 404)
 
@@ -200,7 +233,9 @@ class TestInventory(unittest.TestCase):
         add_data = {"quantity": 1}
 
         response = self.client.post(
-            f"/inventory/99999/add-to-ticket/{self.ticket_id}", json=add_data
+            f"/inventory/99999/add-to-ticket/{self.ticket_id}",
+            json=add_data,
+            headers=self.auth_headers,
         )
         self.assertEqual(response.status_code, 404)
 
