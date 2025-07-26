@@ -1,8 +1,12 @@
 import os
-from dotenv import load_dotenv
 
-# Load environment variables from .env file (for local development)
-load_dotenv()
+# Try to load dotenv if available (for local development)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not installed, skip loading (for production/CI)
+    pass
 
 
 class DevelopmentConfig:
@@ -18,9 +22,6 @@ class TestingConfig:
 
 
 class ProductionConfig:
-    # Load environment variables
-    load_dotenv()  # Load from .env file if it exists
-
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SECRET_KEY = os.environ.get("SECRET_KEY", "super secret secrets")
     print(
