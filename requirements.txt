@@ -2,7 +2,6 @@
 # Core Web Framework
 Flask==3.1.1
 gunicorn==23.0.0
-python-dotenv==1.0.0
 
 # Database & ORM
 SQLAlchemy==2.0.41
