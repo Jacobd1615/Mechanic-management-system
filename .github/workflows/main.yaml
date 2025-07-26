@@ -50,7 +50,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_*.py'
 
   deploy:
-    needs: [test]
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -62,10 +62,8 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Create virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+      - name: Create Virtual Environment
+        run: python -m venv venv
 
       - name: Install dependencies
         run: |
@@ -76,5 +74,5 @@ jobs:
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
-          service-id: ${{ secrets.SERVICE_ID }}
+          service-id: ${{ secrets.SERVICE_ID }} 
           api-key: ${{ secrets.RENDER_API_KEY }}

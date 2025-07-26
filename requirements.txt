@@ -29,9 +29,6 @@ limits==5.4.0
 Faker==37.4.0
 pytest==8.4.1
 
-# Environment & Configuration
-python-dotenv==1.0.1
-
 # Database (PostgreSQL support for production)
 psycopg2-binary==2.9.10
 

@@ -7,9 +7,9 @@ info:
   version: "1.0.0"
 
 # API Host and Schemes
-host: "127.0.0.1:5000"
+host: "mechanic-management-system.onrender.com"
 schemes:
-  - "http"
+  - "https"
 consumes:
   - "application/json"
 produces:
