@@ -1,3 +1,6 @@
+import os
+
+
 class DevelopmentConfig:
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:240179@localhost/mechanic_db"
     DEBUG = True
@@ -11,4 +14,5 @@ class TestingConfig:
 
 
 class ProductionConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")  # Render uses DATABASE_URL
+    CACHE_TYPE = "SimpleCache"

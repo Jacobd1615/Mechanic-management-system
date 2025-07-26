@@ -4,8 +4,10 @@ from jose import jwt, JWTError
 from jose.exceptions import ExpiredSignatureError
 from functools import wraps
 from flask import request, jsonify
+import os
 
 
+SECRET_KEY = os.environ.get('SERCRET_KEY') or "super secret"
 SECRET_KEY = "your_secret_key_here"
 
 
