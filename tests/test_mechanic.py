@@ -28,7 +28,7 @@ class testMechanic(unittest.TestCase):
 
         response = self.client.post("/mechanics/login", json=credentials)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json["status"], "success")
+        self.assertEqual(response.get_json()["status"], "success")
         # Test that auth_token exists
         response_data = response.get_json()
         self.assertIn("auth_token", response_data)

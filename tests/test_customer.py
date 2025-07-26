@@ -27,8 +27,9 @@ class TestMember(unittest.TestCase):
 
         response = self.client.post("/customers/login", json=credentials)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json["status"], "success")
-        return response.json["auth_token"]
+        response_data = response.get_json()
+        self.assertEqual(response_data["status"], "success")
+        return response_data["auth_token"]
 
     def test_invaild_login(self):
         credentials = {"email": "bad_email@email.com", "password": "bad_pw"}
@@ -76,8 +77,10 @@ class TestMember(unittest.TestCase):
         # Use customer ID 1 (the test customer we created in setUp)
         response = self.client.put("/customers/1", json=update_payload, headers=headers)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json["name"], "Peter")
-        self.assertEqual(response.json["email"], "test@email.com")
+        response_data = response.get_json()
+        self.assertIsNotNone(response_data)
+        self.assertEqual(response_data["name"], "Peter")
+        self.assertEqual(response_data["email"], "test@email.com")
 
     def test_invaild_update_customer(self):
         update_payload = {

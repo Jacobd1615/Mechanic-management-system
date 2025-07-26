@@ -19,6 +19,7 @@ class ServiceTicketSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = ServiceTicket
         include_fk = True
+        load_instance = False
         fields = (
             "ticket_id",
             "customer_id",
@@ -48,6 +49,7 @@ class LaborLogSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LaborLog
         include_fk = True
+        load_instance = False
         fields = ("id", "hours_worked", "mechanic_id", "mechanic")
 
 

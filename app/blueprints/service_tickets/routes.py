@@ -55,7 +55,7 @@ def create_service_ticket(current_user):
     )
     db.session.add(new_ticket)
     db.session.commit()
-    return service_ticket_schema.jsonify(new_ticket), 201
+    return jsonify(service_ticket_schema.dump(new_ticket)), 201
 
 
 # Route to get all service tickets
@@ -67,11 +67,11 @@ def get_all_service_tickets():
         per_page = int(request.args.get("per_page", 10))
         query = select(ServiceTicket)
         tickets = db.paginate(query, page=page, per_page=per_page)
-        return service_tickets_schema.jsonify(tickets)
+        return jsonify(service_tickets_schema.dump(tickets))
     except (TypeError, ValueError):
         query = select(ServiceTicket)
         tickets = db.session.execute(query).scalars().all()
-        return service_tickets_schema.jsonify(tickets), 200
+        return jsonify(service_tickets_schema.dump(tickets)), 200
 
 
 # New route for a customer to get their own tickets
@@ -83,7 +83,7 @@ def get_my_tickets(current_user):
     my_tickets = db.session.execute(query).scalars().all()
     if not my_tickets:
         return jsonify({"message": "You have no service tickets."}), 200
-    return service_tickets_schema.jsonify(my_tickets), 200
+    return jsonify(service_tickets_schema.dump(my_tickets)), 200
 
 
 # Route to get a service ticket by ID
@@ -94,7 +94,7 @@ def find_service_ticket(ticket_id):
     ticket = db.session.execute(query).scalars().first()
     if not ticket:
         return jsonify({"Error": "Service ticket not found."}), 404
-    return service_ticket_schema.jsonify(ticket), 200
+    return jsonify(service_ticket_schema.dump(ticket)), 200
 
 
 # Route to delete a service ticket
@@ -202,7 +202,7 @@ def update_service_ticket(current_user, ticket_id):
         setattr(ticket, field, value)
 
     db.session.commit()
-    return service_ticket_schema.jsonify(ticket), 200
+    return jsonify(service_ticket_schema.dump(ticket)), 200
 
 
 # Route to add/remove mechanics from a service ticket
@@ -240,7 +240,7 @@ def edit_ticket_mechanics(current_user, ticket_id):
 
     db.session.add(ticket)  # Explicitly add the ticket to the session
     db.session.commit()
-    return service_ticket_schema.jsonify(ticket), 200
+    return jsonify(service_ticket_schema.dump(ticket)), 200
 
 
 # Route to log labor hours for a mechanic on a specific ticket
@@ -294,7 +294,7 @@ def add_labor_to_ticket(current_user, ticket_id):
     db.session.add(new_labor_log)
     db.session.commit()
 
-    return labor_log_schema.jsonify(new_labor_log), 201
+    return jsonify(labor_log_schema.dump(new_labor_log)), 201
 
 
 # Route to update a labor log entry
@@ -325,7 +325,7 @@ def update_labor_log(current_user, labor_log_id):
     labor_log.hours_worked = hours
     db.session.commit()
 
-    return labor_log_schema.jsonify(labor_log), 200
+    return jsonify(labor_log_schema.dump(labor_log)), 200
 
 
 # Route to delete a labor log entry

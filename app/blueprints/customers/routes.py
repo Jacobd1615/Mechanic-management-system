@@ -57,7 +57,7 @@ def create_customer():
     except ValidationError as e:
         return {"Error": e.messages}, 400
 
-    query = select(Customer).where(Customer.email == customer_data.email)
+    query = select(Customer).where(Customer.email == customer_data["email"])
     if db.session.execute(query).scalar_one_or_none():
         return jsonify({"Error": "Customer with this email already exists"}), 400
 
@@ -66,16 +66,16 @@ def create_customer():
         return jsonify({"Error": "Password is required."}), 400
 
     new_customer = Customer(
-        name=customer_data.name,
-        email=customer_data.email,
-        phone=customer_data.phone,
+        name=customer_data["name"],
+        email=customer_data["email"],
+        phone=customer_data["phone"],
         password=password,
     )
 
     db.session.add(new_customer)
     db.session.commit()
     print("New customer created successfully.")
-    return customer_schema.jsonify(new_customer), 201
+    return jsonify(customer_schema.dump(new_customer)), 201
 
 
 # Route to get all customers
@@ -87,11 +87,11 @@ def get_all_customers(current_user):
         per_page = int(request.args.get("per_page"))
         query = select(Customer)
         customers = db.paginate(query, page=page, per_page=per_page)
-        return customers_schema.jsonify(customers)
+        return jsonify(customers_schema.dump(customers))
     except (TypeError, ValueError):
         query = select(Customer)
         customers = db.session.execute(query).scalars().all()
-        return customers_schema.jsonify(customers), 200
+        return jsonify(customers_schema.dump(customers)), 200
 
 
 # Route to get a customer by id
@@ -102,7 +102,7 @@ def find_customer(current_user, customer_id):
     customer = db.session.get(Customer, customer_id)
     if not customer:
         return jsonify({"Error": "Customer not found."}), 404
-    return customer_schema.jsonify(customer), 200
+    return jsonify(customer_schema.dump(customer)), 200
 
 
 # Route to update a customer by id
@@ -116,17 +116,20 @@ def update_customer(current_user, customer_id):
     if request.json is None:
         return jsonify({"error": "No JSON data provided"}), 400
     try:
-        updated_customer = customer_update_schema.load(
-            request.json, instance=customer, partial=True
-        )
+        customer_data = customer_update_schema.load(request.json, partial=True)
     except ValidationError as e:
         return {"Error": e.messages}, 400
 
+    # Update customer fields from the validated data
+    for field, value in customer_data.items():
+        if hasattr(customer, field):
+            setattr(customer, field, value)
+
     if "password" in request.json and request.json["password"]:
-        updated_customer.password = request.json["password"]
+        customer.password = request.json["password"]
 
     db.session.commit()
-    return customer_schema.jsonify(updated_customer), 200
+    return jsonify(customer_schema.dump(customer)), 200
 
 
 # Route to delete a customer by id
@@ -156,4 +159,4 @@ def search_customer(current_user):
     if not customers:
         return jsonify({"Message": f"No customers found matching '{name}'."}), 404
 
-    return customers_schema.jsonify(customers), 200
+    return jsonify(customers_schema.dump(customers)), 200

@@ -13,7 +13,7 @@ class MechanicSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic
         include_fk = True
-        load_instance = True
+        load_instance = False
         exclude = ("service_tickets", "labor_logs")
 
     @validates("email")
@@ -37,7 +37,7 @@ class MechanicUpdateSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic
         include_fk = True
-        load_instance = True
+        load_instance = False
 
     username = fields.String(dump_only=True)
     password = fields.String(load_only=True, required=False)

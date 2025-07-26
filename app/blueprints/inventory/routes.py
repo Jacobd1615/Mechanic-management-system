@@ -19,13 +19,21 @@ def create_part():
         return jsonify({"Error": "No JSON data provided"}), 400
     try:
         # Use the schema to load and validate the data
-        new_part = part_schema.load(request.json)
+        part_data = part_schema.load(request.json)
     except ValidationError as e:
         return jsonify({"Error": e.messages}), 400
 
+    # Create new part from dictionary data
+    new_part = Part(
+        name=part_data["name"],
+        description=part_data.get("description"),  # Include description field
+        price=part_data["price"],
+        quantity_in_stock=part_data["quantity_in_stock"],
+    )
+
     db.session.add(new_part)
     db.session.commit()
-    return part_schema.jsonify(new_part), 201
+    return jsonify(part_schema.dump(new_part)), 201
 
 
 # Get all parts
@@ -34,7 +42,7 @@ def create_part():
 def get_all_parts():
     query = select(Part)
     parts = db.session.execute(query).scalars().all()
-    return parts_schema.jsonify(parts), 200
+    return jsonify(parts_schema.dump(parts)), 200
 
 
 # Get a single part by ID
@@ -44,7 +52,7 @@ def get_part(part_id):
     part = db.session.get(Part, part_id)
     if not part:
         return jsonify({"Error": PART_NOT_FOUND}), 404
-    return part_schema.jsonify(part), 200
+    return jsonify(part_schema.dump(part)), 200
 
 
 # Update a part
@@ -58,17 +66,17 @@ def update_part(part_id):
         return jsonify({"Error": "No JSON data provided"}), 400
     try:
         # Use partial=True to allow partial updates
-        # Pass the existing instance and the session to the schema's load method.
-        # This will update the 'part' object in place.
-        part = part_schema.load(
-            request.json, session=db.session, instance=part, partial=True
-        )
+        part_data = part_schema.load(request.json, partial=True)
     except ValidationError as e:
         return jsonify({"Error": e.messages}), 400
 
-    # The part object is already updated by schema.load, so no loop is needed.
+    # Update part fields from the validated data
+    for field, value in part_data.items():
+        if hasattr(part, field):
+            setattr(part, field, value)
+
     db.session.commit()
-    return part_schema.jsonify(part), 200
+    return jsonify(part_schema.dump(part)), 200
 
 
 # Delete a part

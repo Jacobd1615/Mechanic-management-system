@@ -8,8 +8,8 @@ from .schemas import (
 )
 from flask import request, jsonify
 from marshmallow import ValidationError
-from sqlalchemy import select, func
-from app.models import Mechanic, db, ServiceTicket, LaborLog, mechanic_association
+from sqlalchemy import select
+from app.models import Mechanic, db, ServiceTicket
 from . import mechanics_bp
 from app.extensions import limiter
 from app.extensions import cache
@@ -26,8 +26,8 @@ def login():
             return jsonify({"messages": "No JSON data provided"}), 400
         # Validate the request data using the login_schema
         credentials = login_schema.load(request.json)
-        email = credentials.email
-        password = credentials.password
+        email = credentials["email"]
+        password = credentials["password"]
     except ValidationError as e:
         return jsonify({"messages": e.messages}), 400
 
@@ -60,16 +60,23 @@ def create_mechanic():
         return {"Error": e.messages}, 400
 
     # Check to see if mechanic already exists
-    query = select(Mechanic).where(Mechanic.email == mechanic_data.email)
+    query = select(Mechanic).where(Mechanic.email == mechanic_data["email"])
     existing_mechanic = db.session.execute(query).scalar_one_or_none()
     if existing_mechanic:
         return {"Error": "Mechanic with this email already exists."}, 400
 
-    # Create new mechanic - mechanic_data is already a Mechanic object
-    db.session.add(mechanic_data)
+    # Create new mechanic from dictionary data
+    new_mechanic = Mechanic(
+        name=mechanic_data["name"],
+        email=mechanic_data["email"],
+        phone=mechanic_data["phone"],
+        password=request.json.get("password"),  # Get password from original request
+        salary=mechanic_data.get("salary", 0.0),  # Include salary field
+    )
+    db.session.add(new_mechanic)
     db.session.commit()
     print("New mechanic created successfully.")
-    return mechanic_schema.jsonify(mechanic_data), 201
+    return jsonify(mechanic_schema.dump(new_mechanic)), 201
 
 
 # get all mechanics
@@ -81,12 +88,12 @@ def get_mechanics(current_user):
         per_page = int(request.args.get("per_page"))
         query = select(Mechanic)
         mechanics = db.paginate(query, page=page, per_page=per_page)
-        return mechanics_schema.jsonify(mechanics)
+        return jsonify(mechanics_schema.dump(mechanics))
     except (TypeError, ValueError):
         # Query all mechanics from the database
         query = select(Mechanic)
         mechanics = db.session.execute(query).scalars().all()
-        return mechanics_schema.jsonify(mechanics), 200
+        return jsonify(mechanics_schema.dump(mechanics)), 200
 
 
 # get a mechanic by id
@@ -96,7 +103,7 @@ def get_mechanic(current_user, mechanic_id):
     mechanic = db.session.get(Mechanic, mechanic_id)
     if not mechanic:
         return jsonify({"Error": "Mechanic not found."}), 404
-    return mechanic_schema.jsonify(mechanic), 200
+    return jsonify(mechanic_schema.dump(mechanic)), 200
 
 
 # update a mechanic
@@ -110,17 +117,20 @@ def update_mechanic(current_user, mechanic_id):
     if request.json is None:
         return jsonify({"error": "No JSON data provided"}), 400
     try:
-        updated_mechanic = mechanic_update_schema.load(
-            request.json, instance=mechanic, partial=True
-        )
+        mechanic_data = mechanic_update_schema.load(request.json, partial=True)
     except ValidationError as e:
         return {"Error": e.messages}, 400
 
+    # Update mechanic fields from the validated data
+    for field, value in mechanic_data.items():
+        if hasattr(mechanic, field):
+            setattr(mechanic, field, value)
+
     if "password" in request.json and request.json["password"]:
-        updated_mechanic.password = request.json["password"]
+        mechanic.password = request.json["password"]
 
     db.session.commit()
-    return mechanic_schema.jsonify(updated_mechanic), 200
+    return jsonify(mechanic_schema.dump(mechanic)), 200
 
 
 # delete a mechanic

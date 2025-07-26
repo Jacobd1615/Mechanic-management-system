@@ -12,7 +12,7 @@ class CustomerSchema(SQLAlchemyAutoSchema):
         model = Customer
         include_fk = True
         exclude = ("service_tickets",)
-        load_instance = True
+        load_instance = False
 
     @validates("email")
     def validate_email(self, value, **kwargs):
@@ -35,7 +35,7 @@ class CustomerUpdateSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Customer
         include_fk = True
-        load_instance = True
+        load_instance = False
 
     username = fields.String(dump_only=True)
     password = fields.String(load_only=True, required=False)

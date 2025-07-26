@@ -9,7 +9,7 @@ from app.models import Part
 class PartSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Part
-        load_instance = True
+        load_instance = False
         include_fk = True
 
     @validates("price")
