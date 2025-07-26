@@ -18,13 +18,8 @@ class TestingConfig:
 
 
 class ProductionConfig:
-    # Render sets DATABASE_URL in environment, fallback to .env file
-    DATABASE_URL = os.environ.get("DATABASE_URL")
-    if not DATABASE_URL:
-        # Try to load from .env if not in environment
-        load_dotenv()
-        DATABASE_URL = os.environ.get("DATABASE_URL")
+    # Load environment variables
+    load_dotenv()  # Load from .env file if it exists
 
-    print(f"DEBUG: DATABASE_URL = {DATABASE_URL}")  # This will show in Render logs
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    DATABASE_URL = os.environ.get("DATABASE_URL")
     CACHE_TYPE = "SimpleCache"
