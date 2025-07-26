@@ -1,12 +1,13 @@
 # Customer schemas will be defined here
 import re
 from marshmallow import ValidationError, fields, validates
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from app.extensions import ma
 from app.models import Customer
 
 
 # Defining the Marshmallow schemas for serialization and deserialization
-class CustomerSchema(ma.SQLAlchemyAutoSchema):
+class CustomerSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Customer
         include_fk = True
@@ -30,7 +31,7 @@ class CustomerSchema(ma.SQLAlchemyAutoSchema):
             raise ValidationError("Password must be at least 8 characters long.")
 
 
-class CustomerUpdateSchema(ma.SQLAlchemyAutoSchema):
+class CustomerUpdateSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Customer
         include_fk = True

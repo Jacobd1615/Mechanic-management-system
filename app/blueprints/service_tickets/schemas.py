@@ -1,5 +1,6 @@
 # Service ticket schemas will be defined here
 import re
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from app.extensions import ma
 from app.models import ServiceTicket, LaborLog
 from marshmallow import fields, validates, ValidationError
@@ -8,7 +9,7 @@ from ..mechanics.schemas import MechanicSchema
 
 
 # Defining the Marshmallow schemas for serialization and deserialization
-class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
+class ServiceTicketSchema(SQLAlchemyAutoSchema):
     customer = fields.Nested(CustomerSchema, exclude=["service_tickets"])
     mechanics = fields.List(
         fields.Nested(MechanicSchema, exclude=["service_tickets", "labor_logs"])
@@ -41,7 +42,7 @@ class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
             )
 
 
-class LaborLogSchema(ma.SQLAlchemyAutoSchema):
+class LaborLogSchema(SQLAlchemyAutoSchema):
     mechanic = fields.Nested(MechanicSchema, only=("id", "name"))
 
     class Meta:

@@ -10,6 +10,7 @@ PyMySQL==1.1.1
 
 # Data Serialization & Validation
 marshmallow==4.0.0
+marshmallow-sqlalchemy==1.1.0
 flask-marshmallow==1.3.0
 
 # Authentication & Security

@@ -1,12 +1,13 @@
 # Mechanic schemas will be defined here
 import re
 from marshmallow import validates, ValidationError, fields
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from app.extensions import ma
 from app.models import Mechanic
 
 
 # Defining the Marshmallow schemas for serialization and deserialization
-class MechanicSchema(ma.SQLAlchemyAutoSchema):
+class MechanicSchema(SQLAlchemyAutoSchema):
     password = fields.String(required=True, load_only=True)
 
     class Meta:
@@ -32,7 +33,7 @@ class MechanicSchema(ma.SQLAlchemyAutoSchema):
             raise ValidationError("Password must be at least 8 characters long.")
 
 
-class MechanicUpdateSchema(ma.SQLAlchemyAutoSchema):
+class MechanicUpdateSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic
         include_fk = True

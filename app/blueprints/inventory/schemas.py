@@ -1,11 +1,12 @@
 # Inventory schemas will be defined here
 from marshmallow import validates, ValidationError
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from app.extensions import ma
 from app.models import Part
 
 
 # Defining the Marshmallow schemas for serialization and deserialization
-class PartSchema(ma.SQLAlchemyAutoSchema):
+class PartSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Part
         load_instance = True
